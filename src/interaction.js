@@ -17,7 +17,7 @@ export function setupInteraction(camera, controls, interactableObjects) {
             if (intersects.length > 0) {
                 const selectedObject = intersects[0].object;
                 
-                console.log("Bir objeye tiklandi!", selectedObject);
+                console.log("An object was clicked!", selectedObject);
                 
                 // Change the object's color randomly for testing purposes
                 selectedObject.material.color.setHex(Math.random() * 0xffffff);
