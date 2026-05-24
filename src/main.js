@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 // 1. Scene
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x111111); // Kaçış odası teması için şimdilik loş bir gri
+scene.background = new THREE.Color(0x111111);
 
 // 2. Camera - Positioned at an angle to provide a 3D view
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
