@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 
-// This function will hold all of Sama's Day 1 structures updated with light-reactive materials
 export function createSamaRoom(scene) {
     
     // --- 1. WALLS AND CEILING MATERIALS (Light-reactive) ---
@@ -110,4 +109,7 @@ export function createSamaRoom(scene) {
     const mysteryBox = new THREE.Mesh(boxGeo, boxMat);
     mysteryBox.position.set(-4, 0.5, -4); // Positioned in the corner
     scene.add(mysteryBox);
+
+    // Return the interactable objects for later use in interaction.js
+    return [mysteryBox, tableGroup];
 }

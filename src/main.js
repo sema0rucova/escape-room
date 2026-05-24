@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import './style.css'; // Included our CSS file
 import { createSamaRoom } from './environment.js';
+import { setupInteraction } from './interaction.js';
 
 // 1. Scene
 const scene = new THREE.Scene();
@@ -22,7 +23,7 @@ const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x444444, side: TH
 const floor = new THREE.Mesh(floorGeometry, floorMaterial);
 floor.rotation.x = Math.PI / 2;
 scene.add(floor);
-createSamaRoom(scene);
+const interactableObjects = createSamaRoom(scene);
 
 // 5. FPS CONTROLS (PointerLockControls)
 const controls = new PointerLockControls(camera, document.body);
@@ -102,6 +103,10 @@ const onKeyUp = (event) => {
 
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
+
+// 9. RAYCASTING (INTERACTION)
+// -----------------------------------------------------------------------
+setupInteraction(camera, controls, interactableObjects);
 
 // 8. Animation Loop
 let prevTime = performance.now();
