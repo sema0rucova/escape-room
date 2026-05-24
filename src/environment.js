@@ -1,12 +1,22 @@
 import * as THREE from 'three';
 
-// This function will hold all of Sama's Day 1 structures
+// This function will hold all of Sama's Day 1 structures updated with light-reactive materials
 export function createSamaRoom(scene) {
     
-    // --- 1. WALLS AND CEILING MATERIAL ---
-    // Using basic materials with different shades for Day 1 placeholders
-    const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x333333, side: THREE.DoubleSide });
-    const ceilingMaterial = new THREE.MeshBasicMaterial({ color: 0x222222, side: THREE.DoubleSide });
+    // --- 1. WALLS AND CEILING MATERIALS (Light-reactive) ---
+    const wallMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x333333, 
+        side: THREE.DoubleSide,
+        roughness: 0.7, // Roughness ratio (0 shiny, 1 matte)
+        metalness: 0.1  // Metallic reflection ratio
+    });
+
+    const ceilingMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x222222, 
+        side: THREE.DoubleSide,
+        roughness: 0.6,
+        metalness: 0.0
+    });
     
     // The floor is 20x20 in main.js, so walls will be placed at the edges (10 units away from center)
     const wallHeight = 6;
@@ -47,8 +57,8 @@ export function createSamaRoom(scene) {
     scene.add(ceiling);
 
 
-    // --- 3. INTERIOR GEOMETRIES (Table & Box) ---
-    const woodColor = 0x8B4513; // Placeholder color for wood
+    // --- 3. INTERIOR GEOMETRIES (Table & Box with physical materials) ---
+    const woodColor = 0x8B4513;  // Placeholder color for wood
     const metalColor = 0x708090; // Placeholder color for metal box
 
     // A. The Table (Grouped structure)
@@ -56,14 +66,22 @@ export function createSamaRoom(scene) {
 
     // Table Top
     const tableTopGeo = new THREE.BoxGeometry(4, 0.1, 2.5);
-    const tableTopMat = new THREE.MeshBasicMaterial({ color: woodColor });
+    const tableTopMat = new THREE.MeshStandardMaterial({ 
+        color: woodColor,
+        roughness: 0.6,
+        metalness: 0.0
+    });
     const tableTop = new THREE.Mesh(tableTopGeo, tableTopMat);
     tableTop.position.y = 1.2; // Height of the table
     tableGroup.add(tableTop);
 
     // Table Legs (4 morphologically simple cylinders/boxes)
     const legGeo = new THREE.BoxGeometry(0.1, 1.2, 0.1);
-    const legMat = new THREE.MeshBasicMaterial({ color: 0x5c2e0b });
+    const legMat = new THREE.MeshStandardMaterial({ 
+        color: 0x5c2e0b,
+        roughness: 0.6,
+        metalness: 0.0
+    });
     
     const legPositions = [
         [-1.8, 0.6, -1.1],
@@ -82,9 +100,13 @@ export function createSamaRoom(scene) {
     scene.add(tableGroup);
 
 
-    // B. The Box/Chest (A simple cube morphology for now)
+    // B. The Box/Chest (A simple cube morphology with metallic properties)
     const boxGeo = new THREE.BoxGeometry(1.2, 1, 1.2);
-    const boxMat = new THREE.MeshBasicMaterial({ color: metalColor });
+    const boxMat = new THREE.MeshStandardMaterial({ 
+        color: metalColor,
+        roughness: 0.3, // Shinier surface for metal
+        metalness: 0.8  // High metallic appearance
+    });
     const mysteryBox = new THREE.Mesh(boxGeo, boxMat);
     mysteryBox.position.set(-4, 0.5, -4); // Positioned in the corner
     scene.add(mysteryBox);
