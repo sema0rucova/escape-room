@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import './style.css'; // Included our CSS file
+import { createSamaRoom } from './environment.js';
 
 // 1. Scene
 const scene = new THREE.Scene();
@@ -21,6 +22,7 @@ const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x444444, side: THREE
 const floor = new THREE.Mesh(floorGeometry, floorMaterial);
 floor.rotation.x = Math.PI / 2;
 scene.add(floor);
+createSamaRoom(scene);
 
 // 5. FPS CONTROLS (PointerLockControls)
 const controls = new PointerLockControls(camera, document.body);
