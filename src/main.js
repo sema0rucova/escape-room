@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import './style.css'; // Included our CSS file
 import { createSamaRoom } from './environment.js';
-import { setupInteraction } from './interaction.js';
+import { setupInteraction, handleHighlight } from './interaction.js'; // Imported highlight handler
 
 // 1. Scene
 const scene = new THREE.Scene();
@@ -133,6 +133,7 @@ function animate() {
 
         controls.moveRight(-velocity.x * delta);
         controls.moveForward(-velocity.z * delta);
+        handleHighlight(camera, interactableObjects);
     }
 
     prevTime = time;
