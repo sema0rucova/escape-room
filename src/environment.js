@@ -292,7 +292,104 @@ export function createSamaRoom(scene) {
     chairGroup.rotation.y = Math.PI; // Rotated the chair 180 degrees to face the table
     scene.add(chairGroup);
 
+
+    // F. The Abandoned Bookshelf (Added for morphology variety and room atmosphere)
+    const bookshelfGroup = new THREE.Group();
+    bookshelfGroup.name = "bookshelf";
+    const shelfMat = tableTopMat.clone(); // Reusing the wood texture
+
+    // Backboard of the bookshelf
+    const backBoardGeo = new THREE.BoxGeometry(3, 4, 0.1);
+    const backBoard = new THREE.Mesh(backBoardGeo, shelfMat);
+    bookshelfGroup.add(backBoard);
+
+    // Left and Right Side Panels
+    const sideGeo = new THREE.BoxGeometry(0.1, 4, 1);
+    const leftSide = new THREE.Mesh(sideGeo, shelfMat);
+    leftSide.position.set(-1.45, 0, 0.45);
+    bookshelfGroup.add(leftSide);
+    
+    const rightSide = new THREE.Mesh(sideGeo, shelfMat);
+    rightSide.position.set(1.45, 0, 0.45);
+    bookshelfGroup.add(rightSide);
+
+    // Horizontal Shelves
+    const shelfGeo = new THREE.BoxGeometry(2.8, 0.1, 0.9);
+    for (let i = -1.5; i <= 1.5; i += 1) {
+        const shelf = new THREE.Mesh(shelfGeo, shelfMat);
+        shelf.position.set(0, i, 0.4);
+        bookshelfGroup.add(shelf);
+    }
+    
+    bookshelfGroup.position.set(7.5, 2, 9.5); 
+    bookshelfGroup.rotation.y = Math.PI; // Rotated 180 degrees to face the center of the room
+    scene.add(bookshelfGroup);
+
+
+    // G. Aluminum Tripod & Camera
+    const tripodGroup = new THREE.Group();
+    tripodGroup.name = "tripod";
+    
+    // Aluminum Material for professional tripod legs
+    const aluminumMat = new THREE.MeshStandardMaterial({
+        color: 0xd9d9d9,
+        metalness: 0.8,
+        roughness: 0.2
+    });
+    
+    // Tripod Legs (Cylinders rotated to form a stand)
+    const tripLegGeo = new THREE.CylinderGeometry(0.03, 0.03, 1.5, 8);
+    
+    const leg1 = new THREE.Mesh(tripLegGeo, aluminumMat);
+    leg1.position.set(0, 0.75, 0.25);
+    leg1.rotation.x = -0.2;
+    tripodGroup.add(leg1);
+    
+    const leg2 = new THREE.Mesh(tripLegGeo, aluminumMat);
+    leg2.position.set(-0.25, 0.75, -0.2);
+    leg2.rotation.x = 0.2;
+    leg2.rotation.z = -0.2;
+    tripodGroup.add(leg2);
+    
+    const leg3 = new THREE.Mesh(tripLegGeo, aluminumMat);
+    leg3.position.set(0.25, 0.75, -0.2);
+    leg3.rotation.x = 0.2;
+    leg3.rotation.z = 0.2;
+    tripodGroup.add(leg3);
+
+    // Camera Body
+    const camBodyGeo = new THREE.BoxGeometry(0.4, 0.3, 0.2);
+    const camMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+    const camBody = new THREE.Mesh(camBodyGeo, camMat);
+    camBody.position.set(0, 1.6, 0);
+    tripodGroup.add(camBody);
+
+    // Camera Lens
+    const lensGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.2, 16);
+    const lens = new THREE.Mesh(lensGeo, camMat);
+    lens.rotation.x = Math.PI / 2;
+    lens.position.set(0, 1.6, 0.15); // Protruding from the body
+    tripodGroup.add(lens);
+
+    // Detailed Prop: High-capacity Micro SD card and Card Reader adapter placed on top
+    const cardReaderGeo = new THREE.BoxGeometry(0.08, 0.02, 0.12);
+    const cardReaderMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
+    const cardReader = new THREE.Mesh(cardReaderGeo, cardReaderMat);
+    cardReader.position.set(0, 1.76, 0); // Resting exactly on top of the camera body
+    tripodGroup.add(cardReader);
+
+    const sdCardGeo = new THREE.BoxGeometry(0.04, 0.01, 0.06);
+    const sdCardMat = new THREE.MeshStandardMaterial({ color: 0xcc0000 }); // Red colored SD card
+    const sdCard = new THREE.Mesh(sdCardGeo, sdCardMat);
+    sdCard.position.set(0, 1.775, 0.02); // Inserted slightly into the card reader
+    tripodGroup.add(sdCard);
+
+    // Placed in the front-left corner
+    tripodGroup.position.set(-7, 0, 7); 
+    tripodGroup.rotation.y = Math.PI / 4; // Angled to point towards the center of the room
+    scene.add(tripodGroup);
+
     // 5. RETURN INTERACTABLE OBJECTS
     // Objects that can receive highlights or collection clicks are returned to main scene
-    return [mysteryBox, tableTop, escapeDoor, keyGroup, chairGroup];
+    return [mysteryBox, tableTop, escapeDoor, keyGroup, chairGroup, bookshelfGroup, tripodGroup];
 }
