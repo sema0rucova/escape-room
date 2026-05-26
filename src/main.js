@@ -59,7 +59,7 @@ window.addEventListener('wheel', (event) => {
     // Scrolling up (negative deltaY) increases brightness, scrolling down decreases it
     if (event.deltaY < 0) {
         flashLight.intensity += 20;
-        if (flashLight.intensity > 500) flashLight.intensity = 500; // Maximum limit
+        if (flashLight.intensity > 200) flashLight.intensity = 200; // Maximum limit
     } else {
         flashLight.intensity -= 20;
         if (flashLight.intensity < 0) flashLight.intensity = 0; // Minimum limit (completely off)
