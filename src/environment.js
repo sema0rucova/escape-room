@@ -97,7 +97,7 @@ export function createSamaRoom(scene) {
     // 4. INTERIOR OBJECTS
     // A. The Escape Door (Pivot setup for rotation + NEW Handle prop)
     const doorPivot = new THREE.Group();
-    doorPivot.position.set(-1.1, 0, -9.9); // Hinge location on the wall (Left edge)
+    doorPivot.position.set(-1.1, 0, -9.9 + 0.1);
     doorPivot.name = "door_pivot"; // Tagged for collection/interaction check
     scene.add(doorPivot);
 
@@ -112,6 +112,14 @@ export function createSamaRoom(scene) {
     escapeDoor.position.set(1.1, 3.8 / 2, 0); // Offset mesh rightwards so hinge is at pivot origin
     escapeDoor.name = "door"; 
     doorPivot.add(escapeDoor);
+
+    const depthPanelGeo = new THREE.PlaneGeometry(2.2, 3.8);
+    const depthPanelMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const depthPanel = new THREE.Mesh(depthPanelGeo, depthPanelMat);
+    depthPanel.position.set(-1.1, 3.8 / 2, -9.9); 
+    depthPanel.visible = false;
+    depthPanel.name = "depthPanel";
+    scene.add(depthPanel);
 
     // Classic Keyhole Structure (Replaced handle knob and moved higher)
     const keyholeGroup = new THREE.Group();
@@ -188,7 +196,11 @@ export function createSamaRoom(scene) {
     });
     const keyGroup = new THREE.Group();
     // Key placed at the exact coordinates of the box (Hidden Key)
-    keyGroup.position.set(-4, 0.5, -4);
+    keyGroup.position.set(-4, 0.91, -4);
+    const hitBoxGeo = new THREE.BoxGeometry(0.8, 0.5, 0.8);
+    const hitBoxMat = new THREE.MeshBasicMaterial({ visible: false });
+    const hitBox = new THREE.Mesh(hitBoxGeo, hitBoxMat);
+    keyGroup.add(hitBox);
     keyGroup.name = "key"; // Tagged for interaction/collection logic
     scene.add(keyGroup);
 
@@ -245,16 +257,41 @@ export function createSamaRoom(scene) {
     bitGroup.add(bitStep);
 
 
-    // D. The Mystery Box (morphology + concept prop)
-    const boxGeo = new THREE.BoxGeometry(1.2, 1, 1.2);
+    // D. The Mystery Box (Hinged Chest Version)
+    const mysteryBox = new THREE.Group();
+    mysteryBox.position.set(-4, 0, -4);
+    mysteryBox.name = "box";
+
     const boxMat = new THREE.MeshStandardMaterial({ 
         map: boxTexture,
         roughness: 0.7,
         metalness: 0.0
     });
-    const mysteryBox = new THREE.Mesh(boxGeo, boxMat);
-    mysteryBox.position.set(-4, 0.5, -4); // Positioned in the corner
-    mysteryBox.name = "box";
+
+    // Box Base (Solid Body)
+    const baseGeo = new THREE.BoxGeometry(1.2, 0.9, 1.2);
+    const boxBase = new THREE.Mesh(baseGeo, boxMat);
+    boxBase.position.y = 0.45; 
+    mysteryBox.add(boxBase);
+
+    // Lid Hinge (Back top corner - Pivot Point)
+    const lidPivot = new THREE.Group();
+    lidPivot.name = "lidPivot";
+    lidPivot.position.set(0, 0.9, -0.6); // Positioned at the back edge
+    mysteryBox.add(lidPivot);
+
+    // Box Lid
+    const lidGeo = new THREE.BoxGeometry(1.2, 0.1, 1.2);
+    const boxLid = new THREE.Mesh(lidGeo, boxMat);
+    boxLid.position.set(0, 0.05, 0.6); // Extended forward from the hinge
+    lidPivot.add(boxLid);
+
+    // Add a bottom inside the box to hide the empty space when lid is open
+    const innerBottomGeo = new THREE.BoxGeometry(1.1, 0.1, 1.1);
+    const innerBottom = new THREE.Mesh(innerBottomGeo, boxMat);
+    innerBottom.position.y = 0.5; // Slightly above base bottom
+    mysteryBox.add(innerBottom);
+
     scene.add(mysteryBox);
 
     // E. The Chair (Added to increase furniture variety)

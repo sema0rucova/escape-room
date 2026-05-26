@@ -1,4 +1,10 @@
 import * as THREE from 'three';
+
+// GAME STATE VARIABLES
+let isBoxOpen = false;
+let hasKey = false;
+let isDoorOpen = false;
+
 // Global variables to track the currently highlighted object
 let intermediateRaycaster = new THREE.Raycaster();
 let centerVector = new THREE.Vector2(0, 0);
@@ -19,13 +25,49 @@ export function setupInteraction(camera, controls, interactableObjects) {
             const intersects = raycaster.intersectObjects(interactableObjects, true);
 
             if (intersects.length > 0) {
-                const selectedObject = intersects[0].object;
+                let target = intersects[0].object;
                 
-                console.log("An object was clicked.", selectedObject);
-                
-                // Add a subtle emissive glow without breaking the original texture/color
-                // 0x555555 gives a nice, slightly bright white/gray glow. 
-                selectedObject.material.emissive.setHex(0x555555);
+                // Traverse up to find the main named parent group (interactable object)
+                while (target && !interactableObjects.includes(target)) {
+                    target = target.parent;
+                }
+                if (!target) return;
+
+                // 1. BOX LOGIC
+                if (target.name === "box" && !isBoxOpen) {
+                    // Find the hinge group inside the box
+                    const lid = target.getObjectByName("lidPivot");
+                    if (lid) {
+                        // Rotate the lid backwards by 120 degrees on the X-axis
+                        lid.rotation.x = -Math.PI / 1.5; 
+                    }
+                    isBoxOpen = true;
+                    console.log("The box is opened! There is a hidden key inside.");
+                }
+                // 2. KEY LOGIC
+                else if (target.name === "key" && isBoxOpen && !hasKey) {
+                    target.visible = false; // Remove key from scene (added to inventory)
+                    hasKey = true;
+                    console.log("You picked up the key! Now you can open the door.");
+                }
+                // 3. DOOR LOGIC
+                else if (target.name === "door" && !isDoorOpen) {
+                    if (hasKey) {
+                        // Rotate the door 90 degrees around its pivot
+                        target.parent.rotation.y = -Math.PI / 2; 
+                        target.parent.position.x += 0.5;
+
+                        const scene = target.parent.parent; // Pivot -> Scene
+                        const panel = scene.getObjectByName("depthPanel");
+                        if (panel) panel.visible = true;
+                        
+                        isDoorOpen = true;
+                        console.log("DOOR OPENED! ESCAPE SUCCESSFUL!");
+                        alert("CONGRATULATIONS! You have successfully escaped the room! 🎉");
+                    } else {
+                        console.log("The door is locked. You need to find the key first!");
+                    }
+                }
             }
         }
     });
@@ -37,29 +79,46 @@ export function handleHighlight(camera, interactableObjects) {
     const intersects = intermediateRaycaster.intersectObjects(interactableObjects, true);
 
     if (intersects.length > 0) {
-        const hoveredObject = intersects[0].object;
+        let target = intersects[0].object;
+        
+        // Traverse up to find the main named parent group
+        while (target && !interactableObjects.includes(target)) {
+            target = target.parent;
+        }
+        if (!target) return;
 
         // Run highlight logic only if the focused object has changed this frame
-        if (lastHoveredObject !== hoveredObject) {
-            // Reset emissive glow on the object we just moved away from
-            if (lastHoveredObject && lastHoveredObject.material) {
-                lastHoveredObject.material.emissive.setHex(0x000000); // Back to default (dark)
+        if (lastHoveredObject !== target) {
+            // Reset emissive glow on all children of the object we just moved away from
+            if (lastHoveredObject) {
+                lastHoveredObject.traverse((child) => {
+                    if (child.isMesh && child.material && child.material.emissive) {
+                        child.material.emissive.setHex(0x000000);
+                    } 
+                });
             }
-
-            lastHoveredObject = hoveredObject;
-
-            // Material highlight implementation: 
-            // UPDATED: Glow intensity reduced from 0x222222 to 0x111111 based on user feedback
-            if (hoveredObject.material && hoveredObject.name !== "key") {
-                // Adds a very subtle light gray glow to identify focused objects in the dark
-                hoveredObject.material.emissive.setHex(0x111111); 
+            
+            lastHoveredObject = target;
+            
+            // Add emissive glow to all children of the newly focused object
+            // Prevent the key from glowing if the box is not opened yet
+            if (target.name !== "key" || isBoxOpen) {
+                target.traverse((child) => {
+                    if (child.isMesh && child.material && child.material.emissive) {
+                        child.material.emissive.setHex(0x111111);
+                    }
+                });
             }
         }
     } else {
         // If the crosshair is pointing at empty space, remove glow from the last hovered item
-        if (lastHoveredObject && lastHoveredObject.material) {
-            lastHoveredObject.material.emissive.setHex(0x000000);
+        if (lastHoveredObject) {
+            lastHoveredObject.traverse((child) => {
+                if (child.isMesh && child.material && child.material.emissive) {
+                    child.material.emissive.setHex(0x000000);
+                }
+            });
+            lastHoveredObject = null;
         }
-        lastHoveredObject = null;
     }
 }
