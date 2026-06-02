@@ -88,7 +88,7 @@ export function createSamaRoom(scene) {
     ceiling.rotation.x = Math.PI / 2;
     scene.add(ceiling);
 
-    // --- Back Wall (Split to create a doorway opening) 
+    // Back Wall (Split to create a doorway opening) 
     const sideWallWidth = 8.9; // (20 total width - 2.2 door width) / 2
     const backWallSideGeo = new THREE.PlaneGeometry(sideWallWidth, wallHeight);
 
@@ -102,19 +102,19 @@ export function createSamaRoom(scene) {
     backWallRight.position.set(1.1 + (sideWallWidth / 2), wallHeight / 2, -10);
     scene.add(backWallRight);
 
-    // Top piece above the door (Door is 3.8 high, Wall is 6)
+    // Top piece above the door 
     const backWallTopGeo = new THREE.PlaneGeometry(2.2, 6 - 3.8);
     const backWallTop = new THREE.Mesh(backWallTopGeo, wallMaterial);
     backWallTop.position.set(0, 3.8 + ((6 - 3.8) / 2), -10);
     scene.add(backWallTop);
 
-    // --- HIDDEN CORRIDOR BEHIND THE DOOR ---
+    // Hidden corridor wall 
     const corridorGroup = new THREE.Group();
     corridorGroup.name = "corridorGroup";
     corridorGroup.visible = false; // Keep it hidden until the door opens
     scene.add(corridorGroup);
 
-    // Corridor Floor (Extends 20 units deep into the background)
+    // Corridor Floor 
     const corridorFloorGeo = new THREE.PlaneGeometry(2.2, 20); 
     const corridorFloor = new THREE.Mesh(corridorFloorGeo, floorMaterial);
     corridorFloor.rotation.x = -Math.PI / 2;
@@ -143,15 +143,13 @@ export function createSamaRoom(scene) {
 
 
     // 4. INTERIOR OBJECTS
-    // A. The Escape Door (Pivot setup for rotation + NEW Handle prop)
+    // A. The Escape Door
     const doorPivot = new THREE.Group();
-    // Menteşeyi tam sol duvarın bittiği yere (-1.1) ve Z ekseninde arka duvara (-9.95) yerleştiriyoruz.
     doorPivot.position.set(-1.1, 0, -9.95); 
     doorPivot.name = "door_pivot"; 
     scene.add(doorPivot);
 
     // Main Door Panel Mesh
-    // Genişliği tam kapı boşluğu kadar (2.2) yapıyoruz! (2.6 çok genişti)
     const doorGeo = new THREE.BoxGeometry(2.2, 3.8, 0.1); 
     const doorMat = new THREE.MeshStandardMaterial({ 
         map: doorTexture,
@@ -160,8 +158,6 @@ export function createSamaRoom(scene) {
     });
     const escapeDoor = new THREE.Mesh(doorGeo, doorMat);
     
-    // Kapıyı menteşeye göre tam genişliğinin yarısı (1.1) kadar sağa kaydırıyoruz.
-    // Böylece sol kenarı tam menteşeye (-1.1 koordinatına) sıfırlanmış oluyor.
     escapeDoor.position.set(1.1, 3.8 / 2, 0); 
     escapeDoor.name = "door"; 
     doorPivot.add(escapeDoor);
@@ -169,13 +165,13 @@ export function createSamaRoom(scene) {
     const depthPanelGeo = new THREE.PlaneGeometry(2.2, 3.8);
     const depthPanelMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
     const depthPanel = new THREE.Mesh(depthPanelGeo, depthPanelMat);
-    // Siyah panelin kapının arkasında kalması için X ekseninde 0 (merkez) noktasına alıyoruz
+
     depthPanel.position.set(0, 3.8 / 2, -9.98); 
     depthPanel.visible = false;
     depthPanel.name = "depthPanel";
     scene.add(depthPanel);
 
-    // Classic Keyhole Structure (Replaced handle knob and moved higher)
+    // Classic Keyhole Structure 
     const keyholeGroup = new THREE.Group();
     // Positioned ergonomically higher (y: -0.4 instead of -0.9) and near the right opening edge (x: 0.85)
     keyholeGroup.position.set(0.85, -0.4, 0.051); 
@@ -198,7 +194,7 @@ export function createSamaRoom(scene) {
     const holeTopGeo = new THREE.CylinderGeometry(0.018, 0.018, 0.012, 12);
     const holeTop = new THREE.Mesh(holeTopGeo, holeMat);
     holeTop.rotation.x = Math.PI / 2;
-    holeTop.position.set(0, 0.01, 0.002); // Slightly shifted up on the plate
+    holeTop.position.set(0, 0.01, 0.002); 
     keyholeGroup.add(holeTop);
 
     // Keyhole Void - Bottom Slot
@@ -237,20 +233,19 @@ export function createSamaRoom(scene) {
         tableGroup.add(leg);
     });
 
-    tableGroup.position.set(0, 0, -3); // Table placed in front of initial spawn
+    tableGroup.position.set(0, 0, -3); 
     scene.add(tableGroup);
 
     // C. The Key Prop
-    //Applying the metallic texture (must exist) and giving it a high metallic/reflective property
+    //Applying the metallic texture  and giving it a high metallic property
     const keyMat = new THREE.MeshStandardMaterial({
-        map: keyMetalTexture, // Yukarıda yüklediğin doku haritası bağlandı
-        color: 0xffffff,      // Dokunun kendi renklerini koruması için beyaz yapıldı
-        metalness: 1.0,       // Tam metalik yansıma
-        roughness: 0.1        // Parlak ve pürüzsüz bir yüzey (fener ışığı vurunca parlasın diye)
+        map: keyMetalTexture, 
+        color: 0xffffff,      
+        metalness: 1.0,       
+        roughness: 0.1        
     });
     const keyGroup = new THREE.Group();
     // Key placed at the exact coordinates of the box (Hidden Key)
-    // Lowered y-position from 0.91 to 0.15 so it sits inside the hollow box
     keyGroup.position.set(-4, 0.15, -4);
     const hitBoxGeo = new THREE.BoxGeometry(0.8, 0.5, 0.8);
     const hitBoxMat = new THREE.MeshBasicMaterial({ visible: false });
@@ -260,7 +255,7 @@ export function createSamaRoom(scene) {
     scene.add(keyGroup);
 
     // Key Construction
-    // Handle Loop (Toruslying flat on table surface)
+    // Handle Loop 
     const handleLoopGeo = new THREE.TorusGeometry(0.12, 0.02, 16, 32);
     const handleLoop = new THREE.Mesh(handleLoopGeo, keyMat);
     handleLoop.rotation.x = Math.PI / 2; // Rotate torus to lie flat horizontally
@@ -362,13 +357,13 @@ export function createSamaRoom(scene) {
     backMesh.position.set(0, (h + t) / 2, -d / 2 + t / 2);
     mysteryBox.add(backMesh);
 
-    // 6. Box Inner Floor (Visual polish for the inside base)
+    // 6. Box Inner Floor 
     const innerBottomGeo = new THREE.BoxGeometry(w - t * 2, 0.01, d - t * 2);
     const innerBottom = new THREE.Mesh(innerBottomGeo, innerMat);
     innerBottom.position.y = t + 0.005;
     mysteryBox.add(innerBottom);
 
-    // Lid Pivot (Positioned exactly at the top back edge)
+    // Lid Pivot 
     const lidPivot = new THREE.Group();
     lidPivot.name = "lidPivot";
     lidPivot.position.set(0, h, -d / 2); 
@@ -382,43 +377,53 @@ export function createSamaRoom(scene) {
 
     scene.add(mysteryBox);
 
-    // E. The Chair (Added to increase furniture variety)
-    const chairGroup = new THREE.Group();
-    chairGroup.name = "chair";
+    // E. The Chairs 
+    function createChair(posX, posY, posZ, rotY) {
+        const chairGroup = new THREE.Group();
+        chairGroup.name = "chair";
+        
+        // Create an independent clone of the table material
+        const chairMat = tableTopMat.clone();
+        
+        // Seat
+        const seatGeo = new THREE.BoxGeometry(0.8, 0.05, 0.8);
+        const seat = new THREE.Mesh(seatGeo, chairMat);
+        seat.position.y = 0.6;
+        chairGroup.add(seat);
+        
+        // Backrest
+        const backGeo = new THREE.BoxGeometry(0.8, 0.8, 0.05);
+        const back = new THREE.Mesh(backGeo, chairMat);
+        back.position.set(0, 1.0, -0.375);
+        chairGroup.add(back);
+
+        // Chair Legs
+        const chairLegGeo = new THREE.BoxGeometry(0.05, 0.6, 0.05);
+        const cLegPositions = [
+            [-0.35, 0.3, -0.35], [0.35, 0.3, -0.35],
+            [-0.35, 0.3, 0.35],  [0.35, 0.3, 0.35]
+        ];
+        cLegPositions.forEach(pos => {
+            const leg = new THREE.Mesh(chairLegGeo, chairMat);
+            leg.position.set(pos[0], pos[1], pos[2]);
+            chairGroup.add(leg);
+        });
+
+        // Set position and rotation
+        chairGroup.position.set(posX, posY, posZ);
+        chairGroup.rotation.y = rotY; 
+        scene.add(chairGroup);
+
+        return chairGroup; 
+    }
+
+    // PLACING THE CHAIRS 
+    const chair1 = createChair(1.5, 0, -1, Math.PI);
+    const chair2 = createChair(-6.8, 0, -5.5, Math.PI / 4);
     
-    // Create an independent clone of the table material to prevent shared emissive bugs
-    const chairMat = tableTopMat.clone();
-    
-    // Seat
-    const seatGeo = new THREE.BoxGeometry(0.8, 0.05, 0.8);
-    const seat = new THREE.Mesh(seatGeo, chairMat);
-    seat.position.y = 0.6;
-    chairGroup.add(seat);
-    
-    // Backrest
-    const backGeo = new THREE.BoxGeometry(0.8, 0.8, 0.05);
-    const back = new THREE.Mesh(backGeo, chairMat);
-    back.position.set(0, 1.0, -0.375);
-    chairGroup.add(back);
-
-    // Chair Legs
-    const chairLegGeo = new THREE.BoxGeometry(0.05, 0.6, 0.05);
-    const cLegPositions = [
-        [-0.35, 0.3, -0.35], [0.35, 0.3, -0.35],
-        [-0.35, 0.3, 0.35],  [0.35, 0.3, 0.35]
-    ];
-    cLegPositions.forEach(pos => {
-        const leg = new THREE.Mesh(chairLegGeo, chairMat);
-        leg.position.set(pos[0], pos[1], pos[2]);
-        chairGroup.add(leg);
-    });
-
-    chairGroup.position.set(1.5, 0, -1); // Pulled the chair back to avoid clipping into the table
-    chairGroup.rotation.y = Math.PI; // Rotated the chair 180 degrees to face the table
-    scene.add(chairGroup);
 
 
-    // F. The Abandoned Bookshelf (Added for morphology variety and room atmosphere)
+    // F. The Abandoned Bookshelf 
     const bookshelfGroup = new THREE.Group();
     bookshelfGroup.name = "bookshelf";
     const shelfMat = tableTopMat.clone(); // Reusing the wood texture
@@ -455,7 +460,7 @@ export function createSamaRoom(scene) {
     const tripodGroup = new THREE.Group();
     tripodGroup.name = "tripod";
     
-    // Aluminum Material for professional tripod legs
+    // Aluminum Material for tripod legs
     const aluminumMat = new THREE.MeshStandardMaterial({
         color: 0xd9d9d9,
         metalness: 0.8,
@@ -496,7 +501,7 @@ export function createSamaRoom(scene) {
     lens.position.set(0, 1.6, 0.15); // Protruding from the body
     tripodGroup.add(lens);
 
-    // Detailed Prop: High-capacity Micro SD card and Card Reader adapter placed on top
+    // High-capacity Micro SD card and Card Reader adapter placed on top
     const cardReaderGeo = new THREE.BoxGeometry(0.08, 0.02, 0.12);
     const cardReaderMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
     const cardReader = new THREE.Mesh(cardReaderGeo, cardReaderMat);
@@ -515,7 +520,7 @@ export function createSamaRoom(scene) {
     scene.add(tripodGroup);
 
 
-    // 8. MYSTERY PAINTINGS (Wall Art with Frames)
+    // H. MYSTERY PAINTINGS (Wall Art with Frames)
 
     // Helper function to create a framed painting to avoid code repetition
     function createWallPainting(imagePath, width, height, posX, posY, posZ, rotationY) {
@@ -524,7 +529,7 @@ export function createSamaRoom(scene) {
         // 1. Load the artwork texture
         const paintingTexture = textureLoader.load(imagePath);
         
-        // 2. Create the artwork plane (The actual picture)
+        // 2. Create the artwork plane
         const artGeo = new THREE.PlaneGeometry(width, height);
         const artMat = new THREE.MeshStandardMaterial({
             map: paintingTexture,
@@ -557,6 +562,8 @@ export function createSamaRoom(scene) {
         scene.add(paintingGroup);
     }
 
+    // I. Rug
+
     function createRug(posX, posY, posZ) {
         const rugGeo = new THREE.PlaneGeometry(4, 6); // 4x6 meters
         const rugMat = new THREE.MeshStandardMaterial({ 
@@ -573,19 +580,16 @@ export function createSamaRoom(scene) {
     createRug (0, 0.01, -3);
 
 
-    // --- PLACING THE PAINTINGS ON THE WALLS ---
-    // Note: Ensure you have painting1.jpg, painting2.jpg, etc., in your textures folder!
-
-    // Painting 1: Placed on the LEFT Wall (Facing right towards the room)
-    // Position X is -9.9 (almost touching the -10 wall). Y is 3 (eye level).
+    // PLACING THE PAINTINGS ON THE WALLS 
+    // Painting 1
     createWallPainting(
         '/textures/painting1.jpg', // Path to the specific painting
         1.6, 2.0,                  // Dimensions (width, height)
-        5.0, 3.0, -9.9,            // X=3.0 (right of door), Y=3.0 (eye level), Z=-9.9 (back wall)
+        5.0, 3.0, -9.9,            
         0                          // Rotation: 0 means it faces directly into the room
     );
 
-    // Painting 2: Placed on the RIGHT Wall (Facing left towards the room)
+    // Painting 2
     createWallPainting(
         '/textures/painting2.jpg', 
         2.5, 1.5,                  // Wider landscape painting
@@ -593,17 +597,15 @@ export function createSamaRoom(scene) {
         -Math.PI / 2               // Rotated -90 degrees for the right wall
     );
 
-    // Painting 3: Placed on the FRONT Wall (Facing the player when they spawn)
+    // Painting 3
     createWallPainting(
         '/textures/painting3.jpg', 
         1.2, 1.6, 
-        -4.0, 2.8, 9.9,            // Placed at Z = 9.9 (Front wall is at Z = 10)
+        -4.0, 2.8, 9.9,            
         Math.PI                    // Rotated 180 degrees to face inside the room
     );
 
-    
-
     // 5. RETURN INTERACTABLE OBJECTS
     // Objects that can receive highlights or collection clicks are returned to main scene
-    return [mysteryBox, tableTop, escapeDoor, keyGroup, chairGroup, bookshelfGroup, tripodGroup];
+    return [mysteryBox, tableTop, escapeDoor, keyGroup, chair1, chair2, bookshelfGroup, tripodGroup];
 }

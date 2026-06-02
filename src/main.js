@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import './style.css'; // Included our CSS file
 import { createSamaRoom } from './environment.js';
-import { setupInteraction, handleHighlight } from './interaction.js'; // Imported highlight handler
+import { setupInteraction, handleHighlight } from './interaction.js'; 
 
 // 1. Scene
 const scene = new THREE.Scene();
@@ -17,7 +17,7 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// 4. Floor - Enlarged a bit
+// 4. Floor 
 const floorGeometry = new THREE.PlaneGeometry(20, 20);
 const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x444444, side: THREE.DoubleSide });
 const floor = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -35,26 +35,26 @@ document.body.addEventListener('click', () => {
 scene.add(camera);
 
 // 6. LIGHTING (FLASHLIGHT AND ATMOSPHERE)
-// ----------------------------------------------------------------------
-// 1. First, we make the general room lighting very dim (Escape room atmosphere)
+
+// a. we make the general room lighting very dim (Escape room atmosphere)
 // Without AmbientLight, places not hit by the spotlight would be pitch black
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.05); // Very low white light
 scene.add(ambientLight);
 
-// 2. Creating the flashlight (SpotLight)
+// b. Creating the flashlight (SpotLight)
 const flashLight = new THREE.SpotLight(0xffffff, 100); // Color (white) and initial brightness
 flashLight.position.set(0, 0, 0); // Will be positioned exactly at the center of the camera
 flashLight.target.position.set(0, 0, -1); // Will point in the direction the camera is looking (forward)
-flashLight.angle = Math.PI / 6; // Angle of the light cone (how wide the illuminated area will be)
+flashLight.angle = Math.PI / 6; 
 flashLight.penumbra = 0.5; // Softness/blur effect on the edges of the light
 flashLight.distance = 30; // The maximum range of the light
 
-// 3. Adding the light and its target to the camera
-// (This way, no matter where we rotate the mouse, the light will follow)
+// c. Adding the light and its target to the camera
+// This way, no matter where we rotate the mouse, the light will follow
 camera.add(flashLight);
 camera.add(flashLight.target);
 
-// 4. Brightness control via Mouse Wheel (Scroll)
+// d. Brightness control via Mouse Wheel (Scroll)
 window.addEventListener('wheel', (event) => {
     // Scrolling up (negative deltaY) increases brightness, scrolling down decreases it
     if (event.deltaY < 0) {
@@ -65,7 +65,6 @@ window.addEventListener('wheel', (event) => {
         if (flashLight.intensity < 0) flashLight.intensity = 0; // Minimum limit (completely off)
     }
 });
-// ----------------------------------------------------------------------
 
 // 7. Walking Logic (WASD)
 const velocity = new THREE.Vector3();
@@ -104,11 +103,10 @@ const onKeyUp = (event) => {
 document.addEventListener('keydown', onKeyDown);
 document.addEventListener('keyup', onKeyUp);
 
-// 9. RAYCASTING (INTERACTION)
-// -----------------------------------------------------------------------
+// 8. RAYCASTING (INTERACTION)
 setupInteraction(camera, controls, interactableObjects);
 
-// 8. Animation Loop
+// 9. Animation Loop
 let prevTime = performance.now();
 
 function animate() {
