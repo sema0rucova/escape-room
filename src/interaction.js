@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-
 // GAME STATE VARIABLES
 let isBoxOpen = false;
 let hasKey = false;
@@ -24,7 +23,7 @@ let lastHoveredObject = null;
 
 export function setupInteraction(camera, controls, interactableObjects) {
     const raycaster = new THREE.Raycaster();
-    const center = new THREE.Vector2(0, 0); // Center of the screen (for FPS)
+    const center = new THREE.Vector2(0, 0); // Center of the screen 
 
     window.addEventListener('mousedown', (event) => {
         // If the game is active (mouse locked) and left-click is pressed (button === 0)
@@ -51,8 +50,6 @@ export function setupInteraction(camera, controls, interactableObjects) {
                  const lid = target.getObjectByName("lidPivot");
     
                 if (lid) {
-        // Rotate the lid backwards by 150 degrees (-Math.PI / 1.2)
-        // This ensures the lid is fully opened for better visibility
                     lid.rotation.x = -Math.PI / 1.5; 
                     soundBox.play();
     }
@@ -62,7 +59,7 @@ export function setupInteraction(camera, controls, interactableObjects) {
 }
                 // 2. KEY LOGIC
                 else if (target.name === "key" && isBoxOpen && !hasKey) {
-                    target.visible = false; // Remove key from scene (added to inventory)
+                    target.visible = false; // Remove key from scene
                     hasKey = true;
                     soundKey.play();
                     console.log("You picked up the key! Now you can open the door.");
@@ -74,19 +71,18 @@ export function setupInteraction(camera, controls, interactableObjects) {
                         soundUnlock.play();
                         console.log("Key turned in the lock...");
 
-            // Cash references immediately to safely preserve them inside the asynchronous timeout scope
                         const doorPivot = target.parent;
                         const scene = doorPivot.parent; 
 
             // STEP 2: Wait 600ms for the lock click sound, then trigger the door opening sequence
                         setTimeout(() => {
-                // Rotate the door around its pivot (keeping your negative rotation direction)
+                // Rotate the door around its pivot 
                             doorPivot.rotation.y = -Math.PI / 2.2; 
 
                 // Play the heavy creaking door opening sound
                             soundDoor.play();
 
-                // Find the long corridor group and reveal it
+                // Find the corridor group and reveal it
                             const corridor = scene.getObjectByName("corridorGroup");
                             if (corridor) {
                                 corridor.visible = true;
@@ -106,7 +102,7 @@ export function setupInteraction(camera, controls, interactableObjects) {
                                 alert("CONGRATULATIONS! You have successfully escaped the room! 🎉");
                 }, 1000);
 
-            }, 600); // 600ms is the perfect delay for the lock sound to finish clicking
+            }, 600); 
             
         }           else {
                     console.log("The door is locked. You need to find the key first!");
